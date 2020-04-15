@@ -6,24 +6,25 @@ using DG.Tweening;
 public class EnemyController : MonoBehaviour
 {
 
-    public float duration = 0.2f;
+    public float speed = 4;
+    public Vector3 offset;
 
-    public List<Transform> waypoints = new List<Transform>();
+    private Vector3 target;
 
     private void Start()
     {
-        transform.position = GetWaypointPositions()[0];
-        transform.DOPath(GetWaypointPositions(), duration * waypoints.Count, PathType.Linear).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Linear);
+        target = transform.position + offset;
     }
 
-    private Vector3[] GetWaypointPositions()
+    private void Update()
     {
-        List<Vector3> wps = new List<Vector3>();
-        foreach (var wp in waypoints)
+        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, target) < 0.001f)
         {
-            wps.Add(wp.position);
+            offset *= -1;
+            target = transform.position + offset;
         }
-        return wps.ToArray();
     }
 
 }
